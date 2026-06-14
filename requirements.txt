@@ -2,12 +2,18 @@
 #    uv export --frozen --no-dev --no-hashes -o requirements.txt
 asgiref==3.11.1
     # via django
+certifi==2026.5.20
+    # via requests
+charset-normalizer==3.4.7
+    # via requests
 django==6.0.6
     # via
     #   djangorestframework
     #   narrative-game-rag
 djangorestframework==3.17.1
     # via narrative-game-rag
+idna==3.18
+    # via requests
 numpy==2.4.6
     # via pgvector
 pgvector==0.4.2
@@ -16,7 +22,11 @@ psycopg2-binary==2.9.12
     # via narrative-game-rag
 python-decouple==3.8
     # via narrative-game-rag
+requests==2.34.2
+    # via narrative-game-rag
 sqlparse==0.5.5
     # via django
 tzdata==2026.2 ; sys_platform == 'win32'
     # via django
+urllib3==2.7.0
+    # via requests
