@@ -18,3 +18,8 @@ dependencies = [
     "requests>=2.34.2",
     "youtube-transcript-api>=1.2.4",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest-django>=4.12.0",
+]
