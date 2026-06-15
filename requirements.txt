@@ -19,6 +19,8 @@ charset-normalizer==3.4.7
     # via requests
 colorama==0.4.6 ; sys_platform == 'win32'
     # via tqdm
+defusedxml==0.7.1
+    # via youtube-transcript-api
 distro==1.9.0
     # via openai
 django==6.0.6
@@ -116,6 +118,7 @@ requests==2.34.2
     #   narrative-game-rag
     #   requests-toolbelt
     #   tiktoken
+    #   youtube-transcript-api
 requests-toolbelt==1.0.0
     # via langsmith
 sniffio==1.3.1
@@ -158,5 +161,7 @@ xxhash==3.7.0
     # via
     #   langgraph
     #   langsmith
+youtube-transcript-api==1.2.4
+    # via narrative-game-rag
 zstandard==0.25.0
     # via langsmith

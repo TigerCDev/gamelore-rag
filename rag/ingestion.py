@@ -1,9 +1,9 @@
 from bs4 import BeautifulSoup
 from langchain_openai import OpenAIEmbeddings
 from rag.models import DocumentChunk
+from youtube_transcript_api import YouTubeTranscriptApi
 
 import requests
-
 
 
 def fetch_text(url):
@@ -48,3 +48,17 @@ def ingest_url(url, game_id, source_type):
     chunks = chunk_text(text)
     vector = embed_chunks(chunks)
     store_chunks(chunks, vector, game_id, url, source_type)
+
+# --- Youtube section --- #
+
+def fetch_youtube_transcript(video_id):
+    ytt_api = YouTubeTranscriptApi()
+    transcript = ytt_api.fetch(video_id)
+    text = ' '.join([item.text for item in transcript])
+    return text
+
+def ingest_youtube(video_id, game_id, source_type):
+    text = fetch_youtube_transcript(video_id)
+    chunks = chunk_text(text)
+    vector = embed_chunks(chunks)
+    store_chunks(chunks, vector, game_id, f'https://www.youtube.com/watch?v={video_id}', source_type)
