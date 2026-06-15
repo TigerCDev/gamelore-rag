@@ -1,7 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
 from rag.retrieval import retrieve_chunks
+from rag.router import classify_question
+
 from langchain_openai import OpenAIEmbeddings
 from langchain_groq import ChatGroq
 
@@ -16,6 +19,29 @@ class AskView(APIView):
                 {'error': 'question is required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        question_type = classify_question(question)
+
+        # -- Factual question -- #
+        if question_type == 'factual':
+            from games.models import Game
+
+            words = [w for w in question.split() if len(w) > 3]
+            from django.db.models import Q
+            query = Q()
+            for word in words:
+                query |= Q(title__icontains=word)
+
+            matched_games = Game.objects.filter(query).values('title', 'release_year', 'synopsis', 'engine')
+
+
+            return Response({
+                'answer': list(matched_games),
+                'source': 'structured_database',
+                'question_type': 'factual',
+            })
+
+        # -- Narrative question -- #
 
         embeddings = OpenAIEmbeddings()
         query_vector = embeddings.embed_query(question)
@@ -42,4 +68,5 @@ class AskView(APIView):
         return Response({
             'answer': answer.content,
             'source': sources,
+            'question_type': 'narrative',
         })
