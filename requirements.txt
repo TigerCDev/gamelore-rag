@@ -4,6 +4,7 @@ annotated-types==0.7.0
     # via pydantic
 anyio==4.13.0
     # via
+    #   groq
     #   httpx
     #   openai
 asgiref==3.11.1
@@ -22,19 +23,24 @@ colorama==0.4.6 ; sys_platform == 'win32'
 defusedxml==0.7.1
     # via youtube-transcript-api
 distro==1.9.0
-    # via openai
+    # via
+    #   groq
+    #   openai
 django==6.0.6
     # via
     #   djangorestframework
     #   narrative-game-rag
 djangorestframework==3.17.1
     # via narrative-game-rag
+groq==0.37.1
+    # via langchain-groq
 h11==0.16.0
     # via httpcore
 httpcore==1.0.9
     # via httpx
 httpx==0.28.1
     # via
+    #   groq
     #   langgraph-sdk
     #   langsmith
     #   openai
@@ -54,11 +60,14 @@ langchain==1.3.9
 langchain-core==1.4.7
     # via
     #   langchain
+    #   langchain-groq
     #   langchain-openai
     #   langgraph
     #   langgraph-checkpoint
     #   langgraph-prebuilt
     #   langgraph-sdk
+langchain-groq==1.1.3
+    # via narrative-game-rag
 langchain-openai==1.3.2
     # via narrative-game-rag
 langchain-protocol==0.0.17
@@ -99,6 +108,7 @@ psycopg2-binary==2.9.12
     # via narrative-game-rag
 pydantic==2.13.4
     # via
+    #   groq
     #   langchain
     #   langchain-core
     #   langgraph
@@ -122,7 +132,9 @@ requests==2.34.2
 requests-toolbelt==1.0.0
     # via langsmith
 sniffio==1.3.1
-    # via openai
+    # via
+    #   groq
+    #   openai
 soupsieve==2.8.4
     # via beautifulsoup4
 sqlparse==0.5.5
@@ -137,6 +149,7 @@ typing-extensions==4.15.0
     # via
     #   anyio
     #   beautifulsoup4
+    #   groq
     #   langchain-core
     #   langchain-protocol
     #   openai
