@@ -24,5 +24,18 @@ services:
   redis:
     image: redis:7-alpine
 
+  celery:
+    build:
+      context: .
+      network: host
+    command: celery -A core worker --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
 volumes:
   postgres_data:
