@@ -1,4 +1,7 @@
 from django.test import TestCase
+from games.models import Game
+from rag.models import DocumentChunk
+from rag.retrieval import retrieve_chunks
 from unittest.mock import patch, MagicMock
 from rest_framework.test import APIClient
 
@@ -42,7 +45,6 @@ class TestRouter(TestCase):
             )
 
 
-
 class TestAskEndpoint(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -64,3 +66,33 @@ class TestAskEndpoint(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('answer', response.data)
         self.assertIn('question_type', response.data)
+
+
+class TestRetrieval(TestCase):
+    def test_retrieve_chunks_returns_results(self):
+        game = Game.objects.create(
+            title='Test Game',
+            release_year=2024,
+            synopsis='A test game',
+            engine='Test engine',
+        )
+
+        DocumentChunk.objects.create(
+            content='This is a test chunk about narrative themes',
+            embedding=[0.1] * 1536,
+            source_url='https://example.com',
+            source_type='essay',
+            game=game
+        )
+
+        results = retrieve_chunks([0.1] * 1536)
+        self.assertGreater(len(results), 0)
+
+
+class TestEdgeCases(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_empty_question_returns_400(self):
+        response = self.client.post('/api/v1/ask/', {'question': ''}, format='json')
+        self.assertEqual(response.status_code, 400)
