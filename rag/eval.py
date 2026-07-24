@@ -1,3 +1,7 @@
+# EVAL_QUESTIONS — the active eval set.
+# Covers games with full multi-source ingestion (Wikipedia + YouTube interview each):
+# Clair Obscur: Expedition 33, God of War (2018), God of War Ragnarok,
+# The Last of Us, The Last of Us Part II.
 EVAL_QUESTIONS = [
 
     # ── Clair Obscur: Expedition 33 ──────────────────────────────────────
@@ -108,6 +112,14 @@ EVAL_QUESTIONS = [
         'game': 'The Last of Us Part II',
         'type': 'narrative',
     },
+]
+
+
+# PLANNED_QUESTIONS — corpus expansion backlog.
+# These games are loaded structurally (Game model) but have no ingested
+# unstructured content (no Wikipedia/YouTube chunks in pgvector) yet.
+# Kept here so the eval set is ready the moment corpus expansion happens.
+PLANNED_QUESTIONS = [
 
     # ── Red Dead Redemption 2 ────────────────────────────────────────────
     {
