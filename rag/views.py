@@ -46,7 +46,7 @@ class AskView(APIView):
         embeddings = OpenAIEmbeddings()
         query_vector = embeddings.embed_query(question)
 
-        chunks = retrieve_chunks(query_vector)
+        chunks = retrieve_chunks(query_vector, k=8)
 
         context = '\n\n'.join([chunk.content for chunk in chunks])
 

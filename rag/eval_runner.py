@@ -25,7 +25,7 @@ def score_answer(actual_answer, expected_answer):
     return len(matches) / len(expected_words)
 
 
-def run_eval():
+def run_eval(k=5, verbose=True):
     embeddings = OpenAIEmbeddings()
     results = []
 
@@ -35,7 +35,7 @@ def run_eval():
         game = item['game']
 
         query_vector = embeddings.embed_query(question)
-        chunks = retrieve_chunks(query_vector, k=5)
+        chunks = retrieve_chunks(query_vector, k=k)
         retrieval_score = score_retrieval(chunks, expected)
 
         results.append({
@@ -45,21 +45,22 @@ def run_eval():
             'top_chunk': chunks[0].content[:150] if chunks else 'NO CHUNKS FOUND',
         })
 
-        print(f"\nQ: {question}")
-        print(f"Game: {game}")
-        print(f"Retrieval score: {retrieval_score:.2f}")
-        print(f"Top chunk: {chunks[0].content[:150] if chunks else 'NONE'}")
-        print("-" * 60)
+        if verbose:
+            print(f"\nQ: {question}")
+            print(f"Game: {game}")
+            print(f"Retrieval score: {retrieval_score:.2f}")
+            print(f"Top chunk: {chunks[0].content[:150] if chunks else 'NONE'}")
+            print("-" * 60)
 
     avg_score = sum(r['retrieval_score'] for r in results) / len(results)
     print(f"\n{'='*60}")
-    print(f"BASELINE RETRIEVAL SCORE: {avg_score:.2f}")
+    print(f"TOP-K={k} RETRIEVAL SCORE: {avg_score:.2f}")
     print(f"Questions evaluated: {len(results)}")
     print(f"{'='*60}")
 
     return avg_score
 
 
-
 if __name__ == '__main__':
-    run_eval()
+    for k in [3, 5, 8, 12, 15]:
+        run_eval(k=k, verbose=False)
