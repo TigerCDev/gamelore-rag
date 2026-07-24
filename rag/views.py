@@ -3,12 +3,14 @@ from django.http import StreamingHttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import api_view
 
 from rag.retrieval import retrieve_chunks
 from rag.router import classify_question
 
 from langchain_openai import OpenAIEmbeddings
 from langchain_groq import ChatGroq
+
 
 
 
@@ -69,3 +71,8 @@ class AskView(APIView):
                 yield token.content
 
         return StreamingHttpResponse(stream_response(), content_type='text/plain')
+
+
+@api_view(['GET'])
+def health_check(request):
+    return Response({'status': 'ok'})
