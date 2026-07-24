@@ -16,7 +16,7 @@ def fetch_text(url):
     return text
 
 
-def chunk_text(text, chunk_size=500, overlap=50):
+def chunk_text(text, chunk_size=1024, overlap=50):
     chunks = []
     start = 0
     while start < len(text):
@@ -50,14 +50,14 @@ def fetch_youtube_transcript(video_id):
     return text
 
 
-def ingest_url(url, game_id, source_type, chunk_size=500):
+def ingest_url(url, game_id, source_type, chunk_size=1024):
     text = fetch_text(url)
     chunks = chunk_text(text, chunk_size=chunk_size)
     vector = embed_chunks(chunks)
     store_chunks(chunks, vector, game_id, url, source_type)
 
 
-def ingest_youtube(video_id, game_id, source_type, chunk_size=500):
+def ingest_youtube(video_id, game_id, source_type, chunk_size=1024):
     text = fetch_youtube_transcript(video_id)
     chunks = chunk_text(text, chunk_size=chunk_size)
     vector = embed_chunks(chunks)
