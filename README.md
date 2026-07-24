@@ -1,4 +1,3 @@
-```markdown
 # gamelore-rag
 
 > A RAG system for deep narrative analysis of story-driven games — hybrid structured + vector retrieval, built on Django, DRF, pgvector, and LangChain.
@@ -13,14 +12,14 @@
 
 ## Status
 
-🚧 In active development — core RAG loop complete, deploy prep underway
+🚧 In active development — core RAG loop, streaming, and eval harness complete; deploy prep underway
 
 ## What this is
 
 A hybrid retrieval system that answers two kinds of questions about story-driven games:
 
 - **Factual questions** ("Who developed Expedition 33?") → routed to PostgreSQL via Django ORM
-- **Narrative questions** ("What does the Maelle ending represent?") → routed to pgvector semantic search → LLM synthesis with citations
+- **Narrative questions** ("What does the Maelle ending represent?") → routed to pgvector semantic search → LLM synthesis with citations, streamed token-by-token
 
 A keyword router classifies incoming questions and sends them down the correct path — no wasted LLM calls on questions the database can already answer.
 
@@ -36,7 +35,7 @@ Full multi-source ingestion (Wikipedia + developer interview transcripts):
 
 ## Eval Harness
 
-20 hand-written domain-expert questions with known-good answers, measuring retrieval precision via keyword overlap. Used to tune retrieval parameters before deploying.
+20 hand-written domain-expert questions with known-good answers (14 currently active against the fully-ingested corpus, 6 held as a corpus-expansion backlog). Retrieval precision measured via keyword overlap between retrieved chunks and expected answers — used to tune retrieval parameters before deploying.
 
 **Top-k tuning results:**
 
@@ -50,18 +49,27 @@ Full multi-source ingestion (Wikipedia + developer interview transcripts):
 
 **Decision:** k=8 selected for production. Captures the majority of retrieval gain while avoiding the token cost and context dilution of retrieving 12-15 chunks per query for marginal improvement.
 
+**Chunk size tuning results:**
+
+| chunk size | retrieval score |
+|---|---|
+| 256 | 0.40 |
+| 512 | 0.49 |
+| 1024 | 0.59 |
+
+**Decision:** chunk_size=1024 selected. Larger chunks carry more surrounding context per embedding, which matters for this corpus since sources are long-form (Wikipedia articles, full interview transcripts) rather than short, discrete facts — more context per chunk means each embedding is more likely to contain the keywords needed to answer a question correctly.
+
 ## Architecture
 
-```
 User question
-    → /ask endpoint (Django DRF)
-    → Query router (classify: factual vs narrative)
-    → [Factual path]   Django ORM → structured result
-    → [Narrative path] Embed question → pgvector cosine similarity → top-8 chunks
-                       → Prompt construction (context + question)
-                       → LLM call (Groq, llama-3.1-8b-instant)
-                       → Response with citations
-```
+→ /ask endpoint (Django DRF)
+→ Query router (classify: factual vs narrative)
+→ [Factual path] Django ORM → structured result
+→ [Narrative path] Embed question → pgvector cosine similarity → top-8 chunks
+→ Prompt construction (context + question)
+→ LLM call (Groq, llama-3.1-8b-instant, streamed)
+→ Tokens streamed to client via StreamingHttpResponse
+
 
 Async ingestion runs through Celery + Redis, decoupled from the query API — fetching, chunking, and embedding new sources never blocks `/ask`.
 
@@ -71,16 +79,14 @@ Async ingestion runs through Celery + Redis, decoupled from the query API — fe
 
 ## Run locally
 
-```
 git clone https://github.com/TigerCDev/gamelore-rag.git
 cd gamelore-rag
 docker compose up --build
-```
+
 
 ## What's next
 
-- Streaming responses via `StreamingHttpResponse`
 - JWT auth + rate limiting
+- drf-spectacular Swagger docs
 - Fly.io deployment
-- Corpus expansion to remaining catalog
-```
+- Corpus expansion to remaining catalog (RDR2, Uncharted, Beyond: Two Souls)
