@@ -1,3 +1,5 @@
+from django.http import StreamingHttpResponse
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -61,12 +63,9 @@ class AskView(APIView):
                     Answer:"""
 
         llm = ChatGroq(model="llama-3.1-8b-instant")
-        answer = llm.invoke(prompt)
 
-        sources = [{'url': chunk.source_url, 'type': chunk.source_type} for chunk in chunks]
+        def stream_response():
+            for token in llm.stream(prompt):
+                yield token.content
 
-        return Response({
-            'answer': answer.content,
-            'source': sources,
-            'question_type': 'narrative',
-        })
+        return StreamingHttpResponse(stream_response(), content_type='text/plain')
