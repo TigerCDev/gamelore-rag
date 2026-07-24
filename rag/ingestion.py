@@ -43,22 +43,22 @@ def store_chunks(chunks, vectors, game_id, source_url, source_type):
         )
 
 
-def ingest_url(url, game_id, source_type):
-    text = fetch_text(url)
-    chunks = chunk_text(text)
-    vector = embed_chunks(chunks)
-    store_chunks(chunks, vector, game_id, url, source_type)
-
-# --- Youtube section --- #
-
 def fetch_youtube_transcript(video_id):
     ytt_api = YouTubeTranscriptApi()
     transcript = ytt_api.fetch(video_id)
     text = ' '.join([item.text for item in transcript])
     return text
 
-def ingest_youtube(video_id, game_id, source_type):
+
+def ingest_url(url, game_id, source_type, chunk_size=500):
+    text = fetch_text(url)
+    chunks = chunk_text(text, chunk_size=chunk_size)
+    vector = embed_chunks(chunks)
+    store_chunks(chunks, vector, game_id, url, source_type)
+
+
+def ingest_youtube(video_id, game_id, source_type, chunk_size=500):
     text = fetch_youtube_transcript(video_id)
-    chunks = chunk_text(text)
+    chunks = chunk_text(text, chunk_size=chunk_size)
     vector = embed_chunks(chunks)
     store_chunks(chunks, vector, game_id, f'https://www.youtube.com/watch?v={video_id}', source_type)
