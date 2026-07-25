@@ -83,15 +83,7 @@ Full multi-source ingestion (Wikipedia + developer interview transcripts):
 
 ## Architecture
 
-User question
-→ /ask endpoint (Django DRF, rate-limited)
-→ Query router (classify: factual vs narrative)
-→ [Factual path] Django ORM → structured result
-→ [Narrative path] Embed question → pgvector cosine similarity → top-8 chunks
-→ Prompt construction (context + question)
-→ LLM call (Groq, llama-3.1-8b-instant, streamed)
-→ Tokens streamed to client via StreamingHttpResponse
-
+![Architecture diagram](docs/architecture.svg)
 
 Async ingestion runs through Celery + Redis, decoupled from the query API — fetching, chunking, and embedding new sources never blocks `/ask`.
 
@@ -117,4 +109,3 @@ docker compose up --build
 
 - Corpus expansion to remaining catalog (RDR2, Uncharted, Beyond: Two Souls)
 - Tighten narrative-path prompt to refuse rather than fall back to general knowledge when retrieval returns no relevant chunks
-- Architecture diagram
