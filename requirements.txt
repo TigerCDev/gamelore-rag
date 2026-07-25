@@ -53,8 +53,13 @@ django==6.0.6
     # via
     #   dj-database-url
     #   djangorestframework
+    #   djangorestframework-simplejwt
     #   narrative-game-rag
 djangorestframework==3.17.1
+    # via
+    #   djangorestframework-simplejwt
+    #   narrative-game-rag
+djangorestframework-simplejwt==5.5.1
     # via narrative-game-rag
 groq==0.37.1
     # via langchain-groq
@@ -155,6 +160,8 @@ pydantic-core==2.46.4
     # via pydantic
 pygments==2.20.0
     # via pytest
+pyjwt==2.13.0
+    # via djangorestframework-simplejwt
 pytest==9.1.0
     # via pytest-django
 pytest-django==4.12.0
