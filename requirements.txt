@@ -47,14 +47,19 @@ distro==1.9.0
     # via
     #   groq
     #   openai
+dj-database-url==3.1.2
+    # via narrative-game-rag
 django==6.0.6
     # via
+    #   dj-database-url
     #   djangorestframework
     #   narrative-game-rag
 djangorestframework==3.17.1
     # via narrative-game-rag
 groq==0.37.1
     # via langchain-groq
+gunicorn==26.0.0
+    # via narrative-game-rag
 h11==0.16.0
     # via httpcore
 httpcore==1.0.9
@@ -125,6 +130,7 @@ ormsgpack==1.12.2
     # via langgraph-checkpoint
 packaging==26.2
     # via
+    #   gunicorn
     #   kombu
     #   langchain-core
     #   langsmith
